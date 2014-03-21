@@ -1,0 +1,76 @@
+#!/bin/bash
+
+KEYS="./pubkeys"
+SERVERS_FILE="servers"
+
+# Provides $SERVERS array
+source $SERVERS_FILE
+
+sync_server() {
+  server=$1
+  printf "Syncing ${server}... "
+  ssh $server "
+    mkdir -p ~/.ssh
+    touch ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/authorized_keys
+    cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys.bak
+  "
+  cat $KEYS/* | ssh $server "cat > ~/.ssh/authorized_keys"
+  printf "done.\n"
+}
+
+sync_all_servers() {
+  if [ ${#SERVERS[@]} -eq 0 ]; then
+    echo "You have no servers configured!"
+    echo "Add servers to the '$SERVERS_FILE' file."
+    exit 1
+  fi
+  for server in ${SERVERS[@]}
+  do
+    sync_server $server
+  done
+}
+
+count_files() {
+  numfiles=($KEYS/*)
+  numfiles=${#numfiles[@]}
+  echo "Found $numfiles key(s)."
+}
+
+usage() {
+  echo "Replaces the authorized_keys on each remote server"
+  echo "with the keys in the '$KEYS' directory."
+  echo "Configure servers in the '$SERVERS_FILE' file."
+  echo
+  echo "Usage: key-sync [-y]"
+  echo
+  echo " y : don't ask for confirmation"
+  echo " h : display this help message"
+}
+
+YES=0
+HELP=0
+
+while getopts yh OPT; do
+  case "$OPT" in
+    y) YES=1;;
+    h) usage && exit 0;;
+    *) usage && exit 1;;
+  esac
+done
+
+count_files
+
+if [ $YES == 1 ]
+then
+  sync_all_servers
+else
+  read -p "Continue? (y/N) " -r
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    sync_all_servers
+  else
+    echo "Aborting - you must enter 'y' to continue"
+  fi
+fi
+

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Add each server to the SERVERS array.
+# Each server should be of the form "user@host".
+
+# If you need a specific key to access any of your servers,
+# make sure it's in the ./pubkeys directory or you will lock
+# yourself out!
+
+SERVERS=( 
+  #"user@host" 
+  #"user@another-host" 
+)
+

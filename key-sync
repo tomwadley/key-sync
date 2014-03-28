@@ -31,10 +31,10 @@ sync_all_servers() {
   done
 }
 
-count_files() {
+display_counts() {
   numfiles=($KEYS/*)
   numfiles=${#numfiles[@]}
-  echo "Found $numfiles key(s)."
+  echo "Found $numfiles key(s) and ${#SERVERS[@]} server(s)."
 }
 
 usage() {
@@ -59,13 +59,13 @@ while getopts yh OPT; do
   esac
 done
 
-count_files
+display_counts
 
 if [ $YES == 1 ]
 then
   sync_all_servers
 else
-  read -p "Continue? (y/N) " -r
+  read -p "This will REPLACE the authorized_keys on each server. Continue? (y/N) " -r
   if [[ $REPLY =~ ^[Yy]$ ]]
   then
     sync_all_servers

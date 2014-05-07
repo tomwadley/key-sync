@@ -2,6 +2,7 @@
 
 # Add each server to the SERVERS array.
 # Each server should be of the form "user@host".
+# Add any additional ssh flags to each as required e.g. "user@host -p 2222".
 
 # If you need a specific key to access any of your servers,
 # make sure it's in the ./pubkeys directory or you will lock

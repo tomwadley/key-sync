@@ -25,9 +25,9 @@ sync_all_servers() {
     echo "Add servers to the '$SERVERS_FILE' file."
     exit 1
   fi
-  for server in ${SERVERS[@]}
+  for ((i = 0; i < ${#SERVERS[@]}; i++))
   do
-    sync_server $server
+    sync_server "${SERVERS[$i]}"
   done
 }
 
